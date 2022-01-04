@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31624.102
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AternosAPI", "AternosAPI\AternosAPI.csproj", "{B9B65EEF-B5EF-4A3F-A99D-A6D6CA08F2F2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AternosAPITests", "AternosAPITests\AternosAPITests.csproj", "{34F5E88B-FD00-4AA6-AD17-8E85CAA73986}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B9B65EEF-B5EF-4A3F-A99D-A6D6CA08F2F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B9B65EEF-B5EF-4A3F-A99D-A6D6CA08F2F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B9B65EEF-B5EF-4A3F-A99D-A6D6CA08F2F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B9B65EEF-B5EF-4A3F-A99D-A6D6CA08F2F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34F5E88B-FD00-4AA6-AD17-8E85CAA73986}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34F5E88B-FD00-4AA6-AD17-8E85CAA73986}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34F5E88B-FD00-4AA6-AD17-8E85CAA73986}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34F5E88B-FD00-4AA6-AD17-8E85CAA73986}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {05DDDC50-7E6F-4E71-9949-9B248CC36B64}
+	EndGlobalSection
+EndGlobal
