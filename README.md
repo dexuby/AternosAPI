@@ -1,6 +1,8 @@
 # AternosAPI
 Unofficial aternos.org client to control your server(s).
 
+NuGet: https://www.nuget.org/packages/AternosAPI/
+
 Example usage:
 ```c#
 var aternosClient = new AternosClient("<YOUR ATERNOS TOKEN>");
