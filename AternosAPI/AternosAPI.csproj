@@ -2,6 +2,13 @@
 
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>dex</Authors>
+    <PackageProjectUrl>https://github.com/dexuby/AternosAPI</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/dexuby/AternosAPI</RepositoryUrl>
+    <Description>Unofficial aternos.org client to control your server(s).</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageTags>aternos aternos.org</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
