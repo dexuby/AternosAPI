@@ -1,7 +1,7 @@
 # AternosAPI
-Unofficial aternos.org client to control your server(s).
+[![NuGet version](https://badge.fury.io/nu/AternosAPI.svg)](https://badge.fury.io/nu/AternosAPI)
 
-NuGet: https://www.nuget.org/packages/AternosAPI/
+Unofficial aternos.org client to control your server(s).
 
 Example usage:
 ```c#
