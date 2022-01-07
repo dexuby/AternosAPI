@@ -191,6 +191,21 @@ namespace AternosAPI
         public async Task<bool> RemovePlayerFromListAsync(AternosList list, string name) =>
             await RemovePlayerFromListAsync(list.GetValue(), name);
 
+        public async Task<bool> InstallSoftwareAsync(string softwareId, bool reinstall)
+        {
+            try
+            {
+                var response =
+                    await _requester.GetAsync(PrepareRequest(
+                        $"https://aternos.org/panel/ajax/software/install.php?software={softwareId}&reinstall={(reinstall ? 1 : 0)}"));
+                return response.StatusCode == HttpStatusCode.OK;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         private string PrepareRequest(string url)
         {
             var name = AternosUtils.GenerateRandomString();
