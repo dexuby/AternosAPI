@@ -206,6 +206,26 @@ namespace AternosAPI
             }
         }
 
+        public async Task<bool> InstallPluginAsync(string provider, string pluginId, string versionId)
+        {
+            try
+            {
+                var response =
+                    await _requester.PostStringContentAsync(
+                        PrepareRequest("https://aternos.org/panel/ajax/players/remove.php"),
+                        $"provider={provider}&addon={pluginId}&version={versionId}");
+                var json = (await JsonDocument.ParseAsync(await response.Content.ReadAsStreamAsync())).RootElement;
+                return json.GetProperty("success").GetBoolean();
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> InstallPluginAsync(AternosPluginProvider provider, string pluginId, string versionId) =>
+            await InstallPluginAsync(provider.GetValue(), pluginId, versionId);
+
         private string PrepareRequest(string url)
         {
             var name = AternosUtils.GenerateRandomString();
