@@ -36,5 +36,21 @@ namespace AternosAPITests
 
             Assert.IsNotNull(await _aternosClient.GetSelectedServerLogAsync());
         }
+
+        [TestMethod]
+        public async Task TestListAdding()
+        {
+            Assert.IsTrue(await _aternosClient.PrepareAsync());
+            Assert.IsTrue(await _aternosClient.UpdateServerIdAsync());
+            Assert.IsTrue(await _aternosClient.AddPlayerToListAsync(AternosList.Whitelist, "x"));
+        }
+
+        [TestMethod]
+        public async Task TestListRemoving()
+        {
+            Assert.IsTrue(await _aternosClient.PrepareAsync());
+            Assert.IsTrue(await _aternosClient.UpdateServerIdAsync());
+            Assert.IsTrue(await _aternosClient.RemovePlayerFromListAsync(AternosList.Whitelist, "x"));
+        }
     }
 }

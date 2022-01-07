@@ -128,7 +128,7 @@ namespace AternosAPI
                 var response =
                     await _requester.PostStringContentAsync(
                         PrepareRequest("https://aternos.org/panel/ajax/options/config.php"),
-                        $"file={file}&option={option}&value={value}", Encoding.UTF8);
+                        $"file={file}&option={option}&value={value}");
                 var json = (await JsonDocument.ParseAsync(await response.Content.ReadAsStreamAsync())).RootElement;
                 return json.GetProperty("success").GetBoolean();
             }
@@ -150,6 +150,46 @@ namespace AternosAPI
                 return null;
             }
         }
+
+        public async Task<bool> AddPlayerToListAsync(string list, string name)
+        {
+            try
+            {
+                var response =
+                    await _requester.PostStringContentAsync(
+                        PrepareRequest("https://aternos.org/panel/ajax/players/add.php"),
+                        $"list={list}&name={name}");
+                var json = (await JsonDocument.ParseAsync(await response.Content.ReadAsStreamAsync())).RootElement;
+                return json.GetProperty("success").GetBoolean();
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> AddPlayerToListAsync(AternosList list, string name) =>
+            await AddPlayerToListAsync(list.GetValue(), name);
+
+        public async Task<bool> RemovePlayerFromListAsync(string list, string name)
+        {
+            try
+            {
+                var response =
+                    await _requester.PostStringContentAsync(
+                        PrepareRequest("https://aternos.org/panel/ajax/players/remove.php"),
+                        $"list={list}&name={name}");
+                var json = (await JsonDocument.ParseAsync(await response.Content.ReadAsStreamAsync())).RootElement;
+                return json.GetProperty("success").GetBoolean();
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> RemovePlayerFromListAsync(AternosList list, string name) =>
+            await RemovePlayerFromListAsync(list.GetValue(), name);
 
         private string PrepareRequest(string url)
         {
