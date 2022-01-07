@@ -68,6 +68,20 @@ if (!success) {
   return;
 }
 
+// Install plugin
+success = await aternosClient.InstallPluginAsync(AternosPluginProvider.Spigot, "<PLUGIN ID>", "<VERSION ID>");
+if (!success) {
+  Console.WriteLine("Failed to install plugin!");
+  return;
+}
+
+// Delete file
+success = await aternosClient.DeleteFileAsync("/plugins/Example.jar");
+if (!success) {
+  Console.WriteLine("Failed to delete file!");
+  return;
+}
+
 // Get AternosLog instance
 var log = await aternosClient.GetSelectedServerLogAsync();
 if (log == null) {
