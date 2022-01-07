@@ -47,6 +47,20 @@ if (!success) {
   return;
 }
 
+// Add a player to a list
+success = await aternosClient.AddPlayerToListAsync(AternosList.Whitelist, "test");
+if (!success) {
+  Console.WriteLine("Failed to add player to whitelist!");
+  return;
+}
+
+// Remove a player from a list
+success = await _aternosClient.RemovePlayerFromListAsync(AternosList.Whitelist, "test");
+if (!success) {
+  Console.WriteLine("Failed to remove player from whitelist!");
+  return;
+}
+
 // Get AternosLog instance
 var log = await aternosClient.GetSelectedServerLogAsync();
 if (log == null) {
