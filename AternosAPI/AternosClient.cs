@@ -212,7 +212,7 @@ namespace AternosAPI
             {
                 var response =
                     await _requester.PostStringContentAsync(
-                        PrepareRequest("https://aternos.org/panel/ajax/players/remove.php"),
+                        PrepareRequest("https://aternos.org/panel/ajax/installaddon.php"),
                         $"provider={provider}&addon={pluginId}&version={versionId}");
                 var json = (await JsonDocument.ParseAsync(await response.Content.ReadAsStreamAsync())).RootElement;
                 return json.GetProperty("success").GetBoolean();
@@ -225,6 +225,22 @@ namespace AternosAPI
 
         public async Task<bool> InstallPluginAsync(AternosPluginProvider provider, string pluginId, string versionId) =>
             await InstallPluginAsync(provider.GetValue(), pluginId, versionId);
+
+        public async Task<bool> DeleteFileAsync(string path)
+        {
+            try
+            {
+                var response =
+                    await _requester.PostStringContentAsync(
+                        PrepareRequest("https://aternos.org/panel/ajax/delete.php"),
+                        $"file={path}");
+                return response.StatusCode == HttpStatusCode.OK;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
 
         private string PrepareRequest(string url)
         {
