@@ -55,7 +55,7 @@ if (!success) {
 }
 
 // Remove a player from a list
-success = await _aternosClient.RemovePlayerFromListAsync(AternosList.Whitelist, "test");
+success = await aternosClient.RemovePlayerFromListAsync(AternosList.Whitelist, "test");
 if (!success) {
   Console.WriteLine("Failed to remove player from whitelist!");
   return;
