@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using AternosAPI;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -27,6 +28,7 @@ namespace AternosAPITests
         [TestMethod]
         public async Task TestServerLog()
         {
+            Assert.IsTrue(await _aternosClient.PrepareAsync());
             var serverId = await _aternosClient.GetServerIdAsync();
             Assert.IsNotNull(serverId);
 

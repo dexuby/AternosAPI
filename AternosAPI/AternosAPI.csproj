@@ -9,6 +9,7 @@
     <Description>Unofficial aternos.org client to control your server(s).</Description>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageTags>aternos aternos.org</PackageTags>
+    <Version>1.0.1</Version>
   </PropertyGroup>
 
   <ItemGroup>
