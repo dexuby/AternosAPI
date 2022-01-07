@@ -61,6 +61,13 @@ if (!success) {
   return;
 }
 
+// Install software
+success = await aternosClient.InstallSoftwareAsync("<SOFTWARE ID>", false);
+if (!success) {
+  Console.WriteLine("Failed to install software!");
+  return;
+}
+
 // Get AternosLog instance
 var log = await aternosClient.GetSelectedServerLogAsync();
 if (log == null) {
