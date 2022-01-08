@@ -125,12 +125,10 @@ namespace AternosAPI
         {
             try
             {
-                var response =
-                    await _requester.PostStringContentAsync(
-                        PrepareRequest("https://aternos.org/panel/ajax/options/config.php"),
-                        $"file={file}&option={option}&value={value}");
-                var json = (await JsonDocument.ParseAsync(await response.Content.ReadAsStreamAsync())).RootElement;
-                return json.GetProperty("success").GetBoolean();
+                var response = await _requester.PostStringContentAndGetJsonElementAsync(
+                    PrepareRequest("https://aternos.org/panel/ajax/options/config.php"),
+                    $"file={file}&option={option}&value={value}");
+                return response.GetProperty("success").GetBoolean();
             }
             catch (Exception)
             {
@@ -155,12 +153,10 @@ namespace AternosAPI
         {
             try
             {
-                var response =
-                    await _requester.PostStringContentAsync(
-                        PrepareRequest("https://aternos.org/panel/ajax/players/add.php"),
-                        $"list={list}&name={name}");
-                var json = (await JsonDocument.ParseAsync(await response.Content.ReadAsStreamAsync())).RootElement;
-                return json.GetProperty("success").GetBoolean();
+                var response = await _requester.PostStringContentAndGetJsonElementAsync(
+                    PrepareRequest("https://aternos.org/panel/ajax/players/add.php"),
+                    $"list={list}&name={name}");
+                return response.GetProperty("success").GetBoolean();
             }
             catch (Exception)
             {
@@ -175,12 +171,10 @@ namespace AternosAPI
         {
             try
             {
-                var response =
-                    await _requester.PostStringContentAsync(
-                        PrepareRequest("https://aternos.org/panel/ajax/players/remove.php"),
-                        $"list={list}&name={name}");
-                var json = (await JsonDocument.ParseAsync(await response.Content.ReadAsStreamAsync())).RootElement;
-                return json.GetProperty("success").GetBoolean();
+                var response = await _requester.PostStringContentAndGetJsonElementAsync(
+                    PrepareRequest("https://aternos.org/panel/ajax/players/remove.php"),
+                    $"list={list}&name={name}");
+                return response.GetProperty("success").GetBoolean();
             }
             catch (Exception)
             {
@@ -210,12 +204,10 @@ namespace AternosAPI
         {
             try
             {
-                var response =
-                    await _requester.PostStringContentAsync(
-                        PrepareRequest("https://aternos.org/panel/ajax/installaddon.php"),
-                        $"provider={provider}&addon={pluginId}&version={versionId}");
-                var json = (await JsonDocument.ParseAsync(await response.Content.ReadAsStreamAsync())).RootElement;
-                return json.GetProperty("success").GetBoolean();
+                var response = await _requester.PostStringContentAndGetJsonElementAsync(
+                    PrepareRequest("https://aternos.org/panel/ajax/installaddon.php"),
+                    $"provider={provider}&addon={pluginId}&version={versionId}");
+                return response.GetProperty("success").GetBoolean();
             }
             catch (Exception)
             {
@@ -256,6 +248,6 @@ namespace AternosAPI
                 .ToString();
         }
 
-        public string GetAjaxToken => _token;
+        public string GetAjaxToken() => _token;
     }
 }

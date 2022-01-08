@@ -13,7 +13,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="RequesterLib" Version="1.0.9" />
+    <PackageReference Include="RequesterLib" Version="1.1.0" />
   </ItemGroup>
 
 </Project>
