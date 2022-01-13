@@ -82,6 +82,12 @@ if (!success) {
   return;
 }
 
+// Get last server status
+var lastStatus = await aternosClient.GetLastServerStatusAsync();
+if (lastStatus != null) {
+  Console.WriteLine($"Server name: {lastStatus.Name} | Server version: {lastStatus.Version} | Online players: {lastStatus.Players}");
+}
+
 // Get AternosLog instance
 var log = await aternosClient.GetSelectedServerLogAsync();
 if (log == null) {
