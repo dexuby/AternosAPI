@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Net;
 using System.Text;
 using System.Text.Json;
@@ -231,6 +232,24 @@ namespace AternosAPI
             catch (Exception)
             {
                 return false;
+            }
+        }
+
+        public async Task<AternosServerStatus> GetLastServerStatusAsync()
+        {
+            try
+            {
+                var response = await _requester.GetStringAsync(Constants.ServerUrl);
+                var json = Regex.Match(response, Constants.LastServerStatusPattern).Groups[1].Value;
+                await using var stream = new MemoryStream(Encoding.UTF8.GetBytes(json));
+                return await JsonSerializer.DeserializeAsync<AternosServerStatus>(stream, new JsonSerializerOptions
+                {
+                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+                });
+            }
+            catch (Exception)
+            {
+                return null;
             }
         }
 
