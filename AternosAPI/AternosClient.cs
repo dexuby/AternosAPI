@@ -236,7 +236,7 @@ namespace AternosAPI
                     await _requester.PostStringContentAsync(
                         PrepareRequest("https://aternos.org/panel/ajax/delete.php"),
                         $"file={path}");
-                return Response<bool>.Success(response.StatusCode == HttpStatusCode.OK));
+                return Response<bool>.Success(response.StatusCode == HttpStatusCode.OK);
             }
             catch (Exception ex)
             {

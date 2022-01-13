@@ -13,7 +13,8 @@ namespace AternosAPITests
 
         public AternosClientTests()
         {
-            var token = File.ReadAllText(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+            var token = File.ReadAllText(Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                 "aternos_token.txt"));
             _aternosClient = new AternosClient(token);
         }
@@ -21,46 +22,77 @@ namespace AternosAPITests
         [TestMethod]
         public async Task TestPreparing()
         {
-            Assert.IsTrue(await _aternosClient.PrepareAsync());
+            var response = await _aternosClient.PrepareAsync();
+            Assert.IsTrue(response.Succeeded());
+            Assert.IsTrue(response.GetValue());
         }
 
         [TestMethod]
         public async Task TestServerLog()
         {
-            Assert.IsTrue(await _aternosClient.PrepareAsync());
-            var serverId = await _aternosClient.GetServerIdAsync();
+            var response = await _aternosClient.PrepareAsync();
+            Assert.IsTrue(response.Succeeded());
+            Assert.IsTrue(response.GetValue());
+
+            var serverIdResponse = await _aternosClient.GetServerIdAsync();
+            Assert.IsTrue(serverIdResponse.Succeeded());
+            var serverId = serverIdResponse.GetValue();
             Assert.IsNotNull(serverId);
 
             _aternosClient.SelectServer(serverId);
 
-            var log = await _aternosClient.GetSelectedServerLogAsync();
+            var logResponse = await _aternosClient.GetSelectedServerLogAsync();
+            Assert.IsTrue(logResponse.Succeeded());
+            var log = logResponse.GetValue();
             Assert.IsNotNull(log);
-            Assert.IsTrue(log.GetStatus() == ResponseStatus.Success);
         }
 
         [TestMethod]
         public async Task TestListAdding()
         {
-            Assert.IsTrue(await _aternosClient.PrepareAsync());
-            Assert.IsTrue(await _aternosClient.UpdateServerIdAsync());
-            Assert.IsTrue(await _aternosClient.AddPlayerToListAsync(AternosList.Whitelist, "x"));
+            var response = await _aternosClient.PrepareAsync();
+            Assert.IsTrue(response.Succeeded());
+            Assert.IsTrue(response.GetValue());
+
+            response = await _aternosClient.UpdateServerIdAsync();
+            Assert.IsTrue(response.Succeeded());
+            Assert.IsTrue(response.GetValue());
+
+            response = await _aternosClient.AddPlayerToListAsync(AternosList.Whitelist, "x");
+            Assert.IsTrue(response.Succeeded());
+            Assert.IsTrue(response.GetValue());
         }
 
         [TestMethod]
         public async Task TestListRemoving()
         {
-            Assert.IsTrue(await _aternosClient.PrepareAsync());
-            Assert.IsTrue(await _aternosClient.UpdateServerIdAsync());
-            Assert.IsTrue(await _aternosClient.RemovePlayerFromListAsync(AternosList.Whitelist, "x"));
+            var response = await _aternosClient.PrepareAsync();
+            Assert.IsTrue(response.Succeeded());
+            Assert.IsTrue(response.GetValue());
+
+            response = await _aternosClient.UpdateServerIdAsync();
+            Assert.IsTrue(response.Succeeded());
+            Assert.IsTrue(response.GetValue());
+
+            response = await _aternosClient.RemovePlayerFromListAsync(AternosList.Whitelist, "x");
+            Assert.IsTrue(response.Succeeded());
+            Assert.IsTrue(response.GetValue());
         }
 
         [TestMethod]
         public async Task TestLastServerStatus()
         {
-            Assert.IsTrue(await _aternosClient.PrepareAsync());
-            Assert.IsTrue(await _aternosClient.UpdateServerIdAsync());
-            var serverStatus = await _aternosClient.GetLastServerStatusAsync();
-            Assert.IsTrue(serverStatus.GetStatus() == ResponseStatus.Success);
+            var response = await _aternosClient.PrepareAsync();
+            Assert.IsTrue(response.Succeeded());
+            Assert.IsTrue(response.GetValue());
+
+            response = await _aternosClient.UpdateServerIdAsync();
+            Assert.IsTrue(response.Succeeded());
+            Assert.IsTrue(response.GetValue());
+
+            var serverStatusResponse = await _aternosClient.GetLastServerStatusAsync();
+            Assert.IsTrue(serverStatusResponse.Succeeded());
+            Assert.IsNotNull(serverStatusResponse.GetValue().Name);
         }
     }
 }
