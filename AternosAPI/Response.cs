@@ -15,8 +15,16 @@ namespace AternosAPI
 
         public ResponseStatus GetStatus() => _status;
 
+        public bool Succeeded() => _status == ResponseStatus.Success;
+
+        public bool Failed() => _status == ResponseStatus.Failed;
+
         public Exception GetException() => _exception;
 
         public bool HasException() => _exception != null;
+
+        public static Response<T> Success(T value) => new(ResponseStatus.Success, value);
+
+        public static Response<T> Failure(Exception ex) => new(ResponseStatus.Failed, exception: ex);
     }
 }

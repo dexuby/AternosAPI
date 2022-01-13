@@ -11,18 +11,20 @@ namespace AternosAPI
 {
     public class AternosClient
     {
+        private readonly AternosClientOptions _options;
         private readonly Requester _requester;
         private string _token;
 
-        public AternosClient(string session)
+        public AternosClient(string session, AternosClientOptions options = null)
         {
+            _options = options ?? AternosClientOptions.DefaultOptions;
             _requester = new Requester.Builder()
-                .WithDefaultHeader("User-Agent", "Mozilla/5.0")
+                .WithDefaultHeader("User-Agent", _options.UserAgent)
                 .WithCookie("aternos.org", "ATERNOS_SESSION", session)
                 .Build();
         }
 
-        public async Task<bool> PrepareAsync(int maxAttempts = 200)
+        public async Task<Response<bool>> PrepareAsync(int maxAttempts = 200)
         {
             try
             {
@@ -35,16 +37,18 @@ namespace AternosAPI
                     attempt++;
                 }
 
-                if (!Regex.IsMatch(content, Constants.TokenPartsPattern)) return false;
+                if (!Regex.IsMatch(content, Constants.TokenPartsPattern))
+                    return Response<bool>.Failure(
+                        new TokenNotFoundException($"Failed to fetch token in {maxAttempts} attempts."));
 
                 var token = Regex.Match(content, Constants.TokenPartsPattern).Groups[1].Value;
                 _token = token;
 
-                return true;
+                return Response<bool>.Success(true);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return false;
+                return Response<bool>.Failure(ex);
             }
         }
 
@@ -55,15 +59,16 @@ namespace AternosAPI
             else _requester.AddCookie("aternos.org", "ATERNOS_SERVER", id);
         }
 
-        public async Task<bool> UpdateServerIdAsync()
+        public async Task<Response<bool>> UpdateServerIdAsync()
         {
-            var serverId = await GetServerIdAsync();
-            if (string.IsNullOrWhiteSpace(serverId)) return false;
-            SelectServer(serverId);
-            return true;
+            var serverIdResponse = await GetServerIdAsync();
+            if (serverIdResponse.Failed() || string.IsNullOrWhiteSpace(serverIdResponse.GetValue()))
+                return Response<bool>.Failure(new ServerIdNotFoundException("Failed to fetch a valid server id."));
+            SelectServer(serverIdResponse.GetValue());
+            return Response<bool>.Success(true);
         }
 
-        public async Task<string> GetServerIdAsync()
+        public async Task<Response<string>> GetServerIdAsync()
         {
             try
             {
@@ -71,69 +76,71 @@ namespace AternosAPI
                 if (!Regex.IsMatch(content, Constants.ServerIdPattern)) return null;
                 var serverId = Regex.Match(content, Constants.ServerIdPattern).Groups[1].Value;
 
-                return string.IsNullOrWhiteSpace(serverId) ? null : serverId;
+                return string.IsNullOrWhiteSpace(serverId)
+                    ? Response<string>.Failure(new ServerIdNotFoundException("Failed to fetch a valid server id."))
+                    : Response<string>.Success(serverId);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return null;
+                return Response<string>.Failure(ex);
             }
         }
 
-        public async Task<bool> StartSelectedServerAsync(int headStart = 0, int accessCredits = 0)
+        public async Task<Response<bool>> StartSelectedServerAsync(int headStart = 0, int accessCredits = 0)
         {
             try
             {
                 var response = await _requester.GetJsonElementAsync(
                     PrepareRequest(
                         $"https://aternos.org/panel/ajax/start.php?headStart={headStart}&access-credits={accessCredits}"));
-                return response.GetProperty("success").GetBoolean();
+                return Response<bool>.Success(response.GetProperty("success").GetBoolean());
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return false;
+                return Response<bool>.Failure(ex);
             }
         }
 
-        public async Task<bool> StopSelectedServerAsync()
+        public async Task<Response<bool>> StopSelectedServerAsync()
         {
             try
             {
                 var response =
                     await _requester.GetJsonElementAsync(PrepareRequest("https://aternos.org/panel/ajax/stop.php"));
-                return response.GetProperty("success").GetBoolean();
+                return Response<bool>.Success(response.GetProperty("success").GetBoolean());
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return false;
+                return Response<bool>.Failure(ex);
             }
         }
 
-        public async Task<bool> RestartSelectedServerAsync()
+        public async Task<Response<bool>> RestartSelectedServerAsync()
         {
             try
             {
                 var response =
                     await _requester.GetAsync(PrepareRequest("https://aternos.org/panel/ajax/restart.php"));
-                return response.StatusCode == HttpStatusCode.OK;
+                return Response<bool>.Success(response.StatusCode == HttpStatusCode.OK);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return false;
+                return Response<bool>.Failure(ex);
             }
         }
 
-        public async Task<bool> ChangeSelectedServerConfigAsync(string file, string option, string value)
+        public async Task<Response<bool>> ChangeSelectedServerConfigAsync(string file, string option, string value)
         {
             try
             {
                 var response = await _requester.PostStringContentAndGetJsonElementAsync(
                     PrepareRequest("https://aternos.org/panel/ajax/options/config.php"),
                     $"file={file}&option={option}&value={value}");
-                return response.GetProperty("success").GetBoolean();
+                return Response<bool>.Success(response.GetProperty("success").GetBoolean());
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return false;
+                return Response<bool>.Failure(ex);
             }
         }
 
@@ -143,84 +150,85 @@ namespace AternosAPI
             {
                 var log = await _requester.GetFromJsonAsync<AternosLog>(
                     PrepareRequest("https://aternos.org/panel/ajax/mclogs.php"));
-                return new Response<AternosLog>(ResponseStatus.Success, log);
+                return Response<AternosLog>.Success(log);
             }
             catch (Exception ex)
             {
-                return new Response<AternosLog>(ResponseStatus.Failed, exception: ex);
+                return Response<AternosLog>.Failure(ex);
             }
         }
 
-        public async Task<bool> AddPlayerToListAsync(string list, string name)
+        public async Task<Response<bool>> AddPlayerToListAsync(string list, string name)
         {
             try
             {
                 var response = await _requester.PostStringContentAndGetJsonElementAsync(
                     PrepareRequest("https://aternos.org/panel/ajax/players/add.php"),
                     $"list={list}&name={name}");
-                return response.GetProperty("success").GetBoolean();
+                return Response<bool>.Success(response.GetProperty("success").GetBoolean());
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return false;
+                return Response<bool>.Failure(ex);
             }
         }
 
-        public async Task<bool> AddPlayerToListAsync(AternosList list, string name) =>
+        public async Task<Response<bool>> AddPlayerToListAsync(AternosList list, string name) =>
             await AddPlayerToListAsync(list.GetValue(), name);
 
-        public async Task<bool> RemovePlayerFromListAsync(string list, string name)
+        public async Task<Response<bool>> RemovePlayerFromListAsync(string list, string name)
         {
             try
             {
                 var response = await _requester.PostStringContentAndGetJsonElementAsync(
                     PrepareRequest("https://aternos.org/panel/ajax/players/remove.php"),
                     $"list={list}&name={name}");
-                return response.GetProperty("success").GetBoolean();
+                return Response<bool>.Success(response.GetProperty("success").GetBoolean());
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return false;
+                return Response<bool>.Failure(ex);
             }
         }
 
-        public async Task<bool> RemovePlayerFromListAsync(AternosList list, string name) =>
+        public async Task<Response<bool>> RemovePlayerFromListAsync(AternosList list, string name) =>
             await RemovePlayerFromListAsync(list.GetValue(), name);
 
-        public async Task<bool> InstallSoftwareAsync(string softwareId, bool reinstall)
+        public async Task<Response<bool>> InstallSoftwareAsync(string softwareId, bool reinstall)
         {
             try
             {
                 var response =
                     await _requester.GetAsync(PrepareRequest(
                         $"https://aternos.org/panel/ajax/software/install.php?software={softwareId}&reinstall={(reinstall ? 1 : 0)}"));
-                return response.StatusCode == HttpStatusCode.OK;
+                return Response<bool>.Success(response.StatusCode == HttpStatusCode.OK);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return false;
+                return Response<bool>.Failure(ex);
             }
         }
 
-        public async Task<bool> InstallPluginAsync(string provider, string pluginId, string versionId)
+        public async Task<Response<bool>> InstallPluginAsync(string provider, string pluginId, string versionId)
         {
             try
             {
                 var response = await _requester.PostStringContentAndGetJsonElementAsync(
                     PrepareRequest("https://aternos.org/panel/ajax/installaddon.php"),
                     $"provider={provider}&addon={pluginId}&version={versionId}");
-                return response.GetProperty("success").GetBoolean();
+                return Response<bool>.Success(response.GetProperty("success").GetBoolean());
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return false;
+                return Response<bool>.Failure(ex);
             }
         }
 
-        public async Task<bool> InstallPluginAsync(AternosPluginProvider provider, string pluginId, string versionId) =>
+        public async Task<Response<bool>> InstallPluginAsync(AternosPluginProvider provider, string pluginId,
+            string versionId) =>
             await InstallPluginAsync(provider.GetValue(), pluginId, versionId);
 
-        public async Task<bool> DeleteFileAsync(string path)
+        public async Task<Response<bool>> DeleteFileAsync(string path)
         {
             try
             {
@@ -228,11 +236,11 @@ namespace AternosAPI
                     await _requester.PostStringContentAsync(
                         PrepareRequest("https://aternos.org/panel/ajax/delete.php"),
                         $"file={path}");
-                return response.StatusCode == HttpStatusCode.OK;
+                return Response<bool>.Success(response.StatusCode == HttpStatusCode.OK));
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return false;
+                return Response<bool>.Failure(ex);
             }
         }
 
@@ -246,11 +254,11 @@ namespace AternosAPI
                 var serverStatus =
                     await JsonSerializer.DeserializeAsync<AternosServerStatus>(stream,
                         Constants.AternosJsonSerializerOptions);
-                return new Response<AternosServerStatus>(ResponseStatus.Success, serverStatus);
+                return Response<AternosServerStatus>.Success(serverStatus);
             }
             catch (Exception ex)
             {
-                return new Response<AternosServerStatus>(ResponseStatus.Failed, exception: ex);
+                return Response<AternosServerStatus>.Failure(ex);
             }
         }
 
@@ -269,5 +277,7 @@ namespace AternosAPI
         }
 
         public string GetAjaxToken() => _token;
+
+        public AternosClientOptions GetOptions() => _options;
     }
 }
