@@ -137,16 +137,17 @@ namespace AternosAPI
             }
         }
 
-        public async Task<AternosLog> GetSelectedServerLogAsync()
+        public async Task<Response<AternosLog>> GetSelectedServerLogAsync()
         {
             try
             {
-                return await _requester.GetFromJsonAsync<AternosLog>(
+                var log = await _requester.GetFromJsonAsync<AternosLog>(
                     PrepareRequest("https://aternos.org/panel/ajax/mclogs.php"));
+                return new Response<AternosLog>(ResponseStatus.Success, log);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return null;
+                return new Response<AternosLog>(ResponseStatus.Failed, exception: ex);
             }
         }
 
@@ -235,21 +236,21 @@ namespace AternosAPI
             }
         }
 
-        public async Task<AternosServerStatus> GetLastServerStatusAsync()
+        public async Task<Response<AternosServerStatus>> GetLastServerStatusAsync()
         {
             try
             {
                 var response = await _requester.GetStringAsync(Constants.ServerUrl);
                 var json = Regex.Match(response, Constants.LastServerStatusPattern).Groups[1].Value;
                 await using var stream = new MemoryStream(Encoding.UTF8.GetBytes(json));
-                return await JsonSerializer.DeserializeAsync<AternosServerStatus>(stream, new JsonSerializerOptions
-                {
-                    PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-                });
+                var serverStatus =
+                    await JsonSerializer.DeserializeAsync<AternosServerStatus>(stream,
+                        Constants.AternosJsonSerializerOptions);
+                return new Response<AternosServerStatus>(ResponseStatus.Success, serverStatus);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return null;
+                return new Response<AternosServerStatus>(ResponseStatus.Failed, exception: ex);
             }
         }
 

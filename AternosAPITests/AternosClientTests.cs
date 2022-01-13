@@ -33,7 +33,9 @@ namespace AternosAPITests
 
             _aternosClient.SelectServer(serverId);
 
-            Assert.IsNotNull(await _aternosClient.GetSelectedServerLogAsync());
+            var log = await _aternosClient.GetSelectedServerLogAsync();
+            Assert.IsNotNull(log);
+            Assert.IsTrue(log.GetStatus() == ResponseStatus.Success);
         }
 
         [TestMethod]
@@ -58,7 +60,7 @@ namespace AternosAPITests
             Assert.IsTrue(await _aternosClient.PrepareAsync());
             Assert.IsTrue(await _aternosClient.UpdateServerIdAsync());
             var serverStatus = await _aternosClient.GetLastServerStatusAsync();
-            Assert.IsNotNull(serverStatus.Name);
+            Assert.IsTrue(serverStatus.GetStatus() == ResponseStatus.Success);
         }
     }
 }
