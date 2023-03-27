@@ -4,7 +4,7 @@
     {
         public static AternosClientOptions DefaultOptions = new()
         {
-            UserAgent = "Mozilla/5.0"
+            UserAgent = Constants.DefaultUserAgent
         };
 
         public string UserAgent { get; init; }
