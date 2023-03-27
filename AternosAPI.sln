@@ -5,7 +5,7 @@ VisualStudioVersion = 17.4.33110.190
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AternosAPI", "AternosAPI\AternosAPI.csproj", "{B9B65EEF-B5EF-4A3F-A99D-A6D6CA08F2F2}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AternosAPI.Tests", "AternosAPITests\AternosAPI.Tests.csproj", "{34F5E88B-FD00-4AA6-AD17-8E85CAA73986}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AternosAPI.Tests", "AternosAPI.Tests\AternosAPI.Tests.csproj", "{34F5E88B-FD00-4AA6-AD17-8E85CAA73986}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
